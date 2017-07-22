@@ -2,6 +2,7 @@
     /*RestAPI Call*/
     $scope.progressBarList = restService.getProgressList(success, error);
     $scope.greeting = "Welcome!";
+
     /*RestAPI Success Method*/
     function success(response) {
         if (response.data != null) {
@@ -9,11 +10,10 @@
             $scope.limit = parseFloat(response.data.limit);
             $scope.bars = response.data.bars;
             $scope.buttons = response.data.buttons;
-            $scope.valid = true;
             $scope.finalbars = [];
             angular.forEach($scope.bars, function (value, key) {
                 $scope.finalbars.push({
-                    value: parseFloat($scope.bars[key] / $scope.limit * 100).toFixed(2),
+                    value: Math.round( parseInt($scope.bars[key] / $scope.limit * 100)),
                     type: "#progress " + key,
                     bartype: "success"
                 });
@@ -29,12 +29,11 @@
 
     /*Button Click*/
     $scope.loadProgress = function (value) {
-        var buttonValue = parseFloat(value);
+        var buttonValue = parseInt(value);
         if ($scope.progresstype != undefined) {
             angular.forEach($scope.finalbars, function (value, key) {
                 if ($scope.finalbars[key].type.toLowerCase() == $scope.progresstype.type.toLowerCase()) {
-                    var valuetoAdd = parseFloat(buttonValue / $scope.limit * 100);
-                    $scope.finalbars[key].value = parseFloat(parseFloat($scope.progresstype.value) + valuetoAdd).toFixed(2);
+                    $scope.finalbars[key].value = Math.round(parseInt(parseInt($scope.progresstype.value) + buttonValue));
                     if (parseFloat($scope.finalbars[key].value) < 0) {
                         $scope.finalbars[key].value = 0;
                     }
