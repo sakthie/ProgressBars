@@ -1,0 +1,98 @@
+﻿singtelApp.controller('ProgressController', function ($scope, restService, $timeout, growl) {
+    /*RestAPI Call*/
+    $scope.progressBarList = restService.getProgressList(success, error);
+    $scope.greeting = "Welcome!";
+    /*RestAPI Success Method*/
+    function success(response) {
+        if (response.data != null) {
+            $scope.response = response;
+            $scope.limit = parseFloat(response.data.limit);
+            $scope.bars = response.data.bars;
+            $scope.buttons = response.data.buttons;
+            $scope.valid = true;
+            $scope.finalbars = [];
+            angular.forEach($scope.bars, function (value, key) {
+                $scope.finalbars.push({
+                    value: parseFloat($scope.bars[key] / $scope.limit * 100).toFixed(2),
+                    type: "#progress " + key,
+                    bartype: "success"
+                });
+            });
+        }
+    }
+
+    /*RestAPI Error Method*/
+    function error(response) {
+        console.log(response);
+        $scope.valid = false;
+    }
+
+    /*Button Click*/
+    $scope.loadProgress = function (value) {
+        var buttonValue = parseFloat(value);
+        if ($scope.progresstype != undefined) {
+            angular.forEach($scope.finalbars, function (value, key) {
+                if ($scope.finalbars[key].type.toLowerCase() == $scope.progresstype.type.toLowerCase()) {
+                    var valuetoAdd = parseFloat(buttonValue / $scope.limit * 100);
+                    $scope.finalbars[key].value = parseFloat(parseFloat($scope.progresstype.value) + valuetoAdd).toFixed(2);
+                    if (parseFloat($scope.finalbars[key].value) < 0) {
+                        $scope.finalbars[key].value = 0;
+                    }
+                    else if (parseFloat($scope.finalbars[key].value) > 100) {
+                        $scope.finalbars[key].bartype = "danger";
+                    }
+                    else {
+                        $scope.finalbars[key].bartype = "success";
+                    }
+                }
+            });
+        }
+        else {
+            growl.addErrorMessage('Please select Progress Bar!');
+        }
+    }
+});
+
+describe("init", function () {
+    beforeEach(module('singtelApp'));
+    var ProgressController,
+        scope;
+    beforeEach(inject(function ($rootScope, $controller) {
+        scope = $rootScope.$new();
+        HelloWorldController = $controller('ProgressController', {
+            $scope: scope
+        });
+    }));
+    it('says Welcome!', function () {
+        expect(scope.greeting).toEqual("Welcome!");
+    });
+
+});
+
+
+describe("Services", function () {
+    beforeEach(module("singtelApp"));
+    describe("ProgressBar Services", function () {
+        var service, $httpBackend;
+        beforeEach(inject(function ($injector21) {
+            service = $injector.get('restService');
+            it('not null', function () {
+                expect(service).not.toBe(null);
+            });
+
+            it('success', function () {
+                var callback = function () {
+                    var json = parse(scope.response);
+                    success(json);
+                }
+            });
+        }));
+        afterEach(function () {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+    });
+});
+
+
+

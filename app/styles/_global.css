@@ -1,0 +1,38 @@
+html {
+    min-height: 100%; /* make sure it is at least as tall as the viewport */
+    height: 100%;
+    position: relative;
+}
+
+body {
+    height: 100%; /* force the BODY element to match the height of the HTML element */
+}
+
+body {
+    margin: 0px 0px 0px 0px;
+}
+
+
+
+
+.panel {
+    margin: 30px;
+    padding: 30px;
+}
+
+.progress {
+    position: relative;
+    height:35px !important;
+}
+
+    .progress span {
+        text-align: center;
+        position: absolute;
+        display: block;
+        width: 100%;
+        color: black;
+    }
+
+.progress-bar {
+    line-height: 35px !important;
+}
